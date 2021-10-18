@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "discordtools"
+version = "0.1.0"
+description = ""
+authors = ["Marco Rougeth <pypi@rougeth.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+"discord.py" = "^1.7.3"
+rich = "^10.12.0"
+click = "^8.0.3"
+
+[tool.poetry.dev-dependencies]
+
+[tool.poetry.scripts]
+discordtools = "discordtools.cli:cli"
+
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
