@@ -21,20 +21,23 @@ async def download_avatars(members, path):
     await asyncio.gather(*tasks)
 
 
-async def get_members(guild, include_default_avatar):
+async def get_members(guild, role, include_default_avatar):
     """Get all members from a Discord server"""
     members = await guild.fetch_members().flatten()
+
+    # Filter members by specific role
+    if role:
+        members = filter(lambda m: discord.utils.get(m.roles, name=role), members)
+
+
+    # Filter out users who didn't define an avatar
     if not include_default_avatar:
-        # Filter out users who didn't define an avatar
-        members = [
-            member
-            for member in members
-            if member.default_avatar_url != member.avatar_url
-        ]
-    return members
+        members = filter(lambda m: m.default_avatar_url != m.avatar_url, members)
+
+    return list(members)
 
 
-async def main(token, guild_id, path, include_default_avatar):
+async def main(token, guild_id, role, path, include_default_avatar):
     console = Console()
     with console.status("Authenticating at Discord..."):
         client = discord.Client(intents=discord.Intents.all())
@@ -46,7 +49,7 @@ async def main(token, guild_id, path, include_default_avatar):
             console.log(f"Discord Server: {guild.name}")
 
         with console.status("Retreving all members..."):
-            members = await get_members(guild, include_default_avatar)
+            members = await get_members(guild, role, include_default_avatar)
             console.log(f"Total members: {len(members)}")
 
         with console.status("Downloading avatars..."):
@@ -61,12 +64,15 @@ def cli():
     ...
 
 
-@cli.command()
+@cli.command("download-avatars")
 @click.option(
     "-t", "--token", envvar="DISCORD_TOKEN", required=True, help="Discord Token"
 )
 @click.option(
     "-g", "--guild-id", envvar="DISCORD_GUILD_ID", required=True, help="Guild ID"
+)
+@click.option(
+    "-r", "--role", help="Filter by role"
 )
 @click.option(
     "-p",
@@ -83,8 +89,8 @@ def cli():
     envvar="DISCORD_INCLUDE_DEFAULT_AVATAR",
     help="Include users with default avatar",
 )
-def download_avatars(include_default_avatar, path, guild_id, token):
-    asyncio.run(main(token, guild_id, path, include_default_avatar))
+def cmd_download_avatars(include_default_avatar, path, guild_id, role, token):
+    asyncio.run(main(token, guild_id, role, path, include_default_avatar))
 
 
 if __name__ == "__main__":
