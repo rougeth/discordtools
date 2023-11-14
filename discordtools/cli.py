@@ -72,7 +72,7 @@ def cli():
     "-g", "--guild-id", envvar="DISCORD_GUILD_ID", required=True, help="Guild ID"
 )
 @click.option(
-    "-r", "--role", help="Filter by role"
+    "-r", "--role", help="Filter users by role"
 )
 @click.option(
     "-p",

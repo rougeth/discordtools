@@ -1,7 +1,8 @@
 [tool.poetry]
 name = "discordtools"
 version = "0.1.0"
-description = ""
+description = "A collection of useful tools for managing a Discord server"
+readme = "README.md"
 authors = ["Marco Rougeth <pypi@rougeth.com>"]
 
 [tool.poetry.dependencies]
